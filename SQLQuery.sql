@@ -65,7 +65,7 @@ BEGIN
 
 END;
 ------------------------------------------------------------------------------------------------------------------
-						--***DISPLAY FULL TABLE OUTPUT***
+									--***DISPLAY FULL TABLE OUTPUT***
 USE car SELECT * FROM Car
 ------------------------------------------------------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ GO
 ------------------------------------------------------------------------------------------------------------------
 									--***CREATE NEW TABLE AND INSERT VALUES*** 
 
-use test CREATE TABLE Contacts
+use test CREATE TABLE Purchase_Detail
 (  
     EmployeeID int, primary key (EmployeeID),
     PersonName nvarchar(50) NOT NULL,  
@@ -156,7 +156,7 @@ use test CREATE TABLE Contacts
 );
 
 use test Insert into 
-Contacts(EmployeeID, PersonName, Item, Units, Cost) 
+Purchase_Detail(EmployeeID, PersonName, Item, Units, Cost) 
 values 
 ('101','Smith','Desk','2','125.00'),
 ('102','Gill','Pencil','5','413.00'),
@@ -167,23 +167,23 @@ values
 ------------------------------------------------------------------------------------------------------------------
 									--***INNER JOINS*** 
 
-select Employee.FirstName, Employee.Phone, Contacts.Item
-from Employee,Contacts
-where Employee.EmployeeID = Contacts.EmployeeID
+select Employee.FirstName, Employee.Phone, Purchase_Detail.Item
+from Employee,Purchase_Detail
+where Employee.EmployeeID = Purchase_Detail.EmployeeID
 
 ------------------------------------------------------------------------------------------------------------------
 									--***UPDATE ROW VALUE IN A TABLE*** 
 
-update Contacts set Units = '15' where Units = 5
+update Purchase_Detail set Units = '15' where Units = 5
 
 ------------------------------------------------------------------------------------------------------------------
 									--***LEFT OUTER JOIN***
 
 use test select Employee.FirstName, Employee.EMail 
 from Employee
-left outer join Contacts
-on Employee.EmployeeID = Contacts.EmployeeID
-where Employee.EmployeeID = Contacts.EmployeeID
+left outer join Purchase_Detail
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
+where Employee.EmployeeID = Purchase_Detail.EmployeeID
 ------------------------------------------------------------------------------------------------------------------
 									--***DISPLAY CURRENT TIMESTAMP***
 
@@ -196,22 +196,76 @@ SELECT distinct LastName from Employee
 ------------------------------------------------------------------------------------------------------------------
 									--***INSERT DATA FROM ONE TABLE TO ANOTHER(WITH SAME COLUMN NAME)***
 
-insert into Contacts 
+insert into Purchase_Detail 
 (EmployeeID,FirstName)
 select EmployeeID,FirstName
 from Employee
 where EmployeeID = '107'
 ------------------------------------------------------------------------------------------------------------------
+									--***DISPLAY COLUMNS STARTING WITH  & ENDING WITH  ***
+
+select * from Employee where FirstName like 'R%' or LastName like '%E'
+
+									--***DISPLAY ROWS BETWEEN  ***
+select * from Car where CarID between 101 and 301
+
+									--***RENAME TABLE ***
+sp_rename "old-name", "new-name"
+
+------------------------------------------------------------------------------------------------------------------
+
+--alter table Purchase_Detail change Phone Mobile varchar(15) ❌ NOT WORKING ❌
+
+									--***NORMAL SELECT COMMAND WITH EXTRAS ***
+use test select * from Employee EXTRA_DECORATIONS E:M:P:L:O:Y:
+
+------------------------------------------------------------------------------------------------------------------
+									--***UPDATE COLUMN VALUES FROM ONE TABLE TO ANOTHER***
+													--***INNER JOIN***
+
+update⚡ Employee 
+set⚡ Employee.Place = Purchase_Detail.Place 
+from⚡ Employee 
+inner join⚡ Purchase_Detail 
+on⚡ Employee.EmployeeID = Purchase_Detail.EmployeeID
+
+(OR)
+
+UPDATE Employee
+set Place = (select Place from Purchase_Detail where Employee.EmployeeID = Purchase_Detail.EmployeeID)
+
+------------------------------------------------------------------------------------------------------------------
+													--***RIGHT JOIN***
+
+select Employee.Phone, Employee.Place, Purchase_Detail.Cost
+from Employee
+right join Purchase_Detail
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
+------------------------------------------------------------------------------------------------------------------
 */
 
-use test select * from Contacts
+use test select * from Purchase_Detail
 use test select * from Employee
+use test select * from Car
+use test select * from CarDescription
+
+alter table Purchase_Detail add Phone varchar(15)
 
 
 
-SELECT distinct LastName from Employee 
+update Purchase_Detail set Cost = '1250' where EmployeeID = 101
 
 
-update Contacts set place = 'Mexico' where Cost  < 500
+use test select * from Employee EXTRA_DECORATIONS E:M:P:L:O:Y:
+use test select * from Purchase_Detail
+
+select Employee.Phone, Employee.Place, Purchase_Detail.Cost
+from Employee
+right join Purchase_Detail
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
 
 
+select E.Phone, E.Place, P.Cost, P.Units
+from Employee E
+right join Purchase_Detail P
+on P.EmployeeID = E.EmployeeID
