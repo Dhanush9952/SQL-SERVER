@@ -1,4 +1,5 @@
 ﻿
+
 /*
 create database test; 
 ------------------------------------------------------------------------------------------------------------------
@@ -89,17 +90,20 @@ INSERT INTO CarDescription VALUES
 
 							--***********  CREATING STORED PROCEDURES  *********
 
-CREATE PROCEDURE GetCarDesc
+CREATE PROCEDURE Procedure_Employee_Purchase
+WITH ENCRYPTION
 AS
 BEGIN
 SET NOCOUNT ON
-SELECT C.CarID,C.CarName,CD.CarDescription  FROM 
-Car C
-INNER JOIN CarDescription CD ON C.CarID=CD.CarID
+select Employee.FirstName, Purchase_Detail.Product, Purchase_Detail.Cost, Employee.Phone 
+from Employee 
+inner join Purchase_Detail 
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
 END
 
+
 									--***RUN/EXECUTE STORED PROCEDURE***
-EXEC GetCarDesc
+EXEC Procedure_Employee_Purchase
 
 ------------------------------------------------------------------------------------------------------------------
 									--***DELETE A ROW FROM A TABLE***
@@ -163,7 +167,23 @@ values
 ('103','Andrew','Binder','17','529.00'),
 ('104','Morgan','Pen','21','1250.00'),
 ('105','Jordan','Pen-set','42','1005.00')
+---------------------------------------------------------------------------------------------------------
+create table Sales_Detail
+(
+Order_ID int primary key,
+Product_Type nvarchar(50) not null,
+Order_Priority nvarchar(10),
+Unit_Price int,
+Order_Date date,
+Country nvarchar(50)
+)
 
+Insert into Sales_Detail(Order_ID,Product_Type,Order_Priority,Unit_Price,Order_Date,Country)
+values 
+(669165933,'Baby_Food','H',255.28,'08-01-2022','Tuvalu'),
+(963881480,'Office_Supplies','C',205.7,'06-12-2021','Grenada'),
+(341417157,'Office_Supplies','M',651.21,'02-01-2022','Angola'),
+(514321792,'Office_Supplies','L',200.7,'03-12-2021','Russia');
 ------------------------------------------------------------------------------------------------------------------
 									--***INNER JOINS*** 
 
@@ -235,37 +255,120 @@ UPDATE Employee
 set Place = (select Place from Purchase_Detail where Employee.EmployeeID = Purchase_Detail.EmployeeID)
 
 ------------------------------------------------------------------------------------------------------------------
-													--***RIGHT JOIN***
+												--***RIGHT JOIN***
 
 select Employee.Phone, Employee.Place, Purchase_Detail.Cost
 from Employee
 right join Purchase_Detail
 on Employee.EmployeeID = Purchase_Detail.EmployeeID
+
+(OR)
+select E.Phone, E.Place, P.Cost, P.Units
+from Employee E
+right join Purchase_Detail P
+on P.EmployeeID = E.EmployeeID
+------------------------------------------------------------------------------------------------------------------
+											***COMBINE 3 TABLES USING JOIN***
+
+select E.FirstName as 'TABLE_1', S.Buyer_LastName AS 'TABLE_2', P.Cost AS 'TABLE_3'
+from Employee E
+join Purchase_Detail P
+on E.EmployeeID = P.EmployeeID
+join Sales_Detail S
+on P.FirstName = S.Buyer_FirstName
+------------------------------------------------------------------------------------------------------------------
+										***CREATING VIEW AND DISPLAY***
+
+create view Employee_Purchase as
+select Employee.FirstName, Employee.Phone, Purchase_Detail.Product,  Purchase_Detail.Cost
+from Employee 
+inner join Purchase_Detail 
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
+
+											***DISPLAY CREATED VIEW***
+select * from Employee_Purchase
+
+											***DELETE CREATED VIEW***
+drop view Employee_Purchase
+------------------------------------------------------------------------------------------------------------------
+												***SUB QUERY***
+select Employee.Place, Employee.HireDate
+from Employee
+where Employee.Place in
+		(select Purchase_Detail.Place	
+		from Purchase_Detail
+		where Purchase_Detail.Cost > 500)
+------------------------------------------------------------------------------------------------------------------
+										***SUM,MIN,MAX,AVG,ABS QUERY***
+
+select SUM(Purchase_Detail.Cost) as 'Total cost' from Purchase_Detail
+select min(Purchase_Detail.Cost) as 'Minimum cost' from Purchase_Detail
+select max(Purchase_Detail.Cost) as 'Maximum cost' from Purchase_Detail
+select avg(Purchase_Detail.Cost) as 'Average cost' from Purchase_Detail
+SELECT ABS(-24) AS 'ABSOLUTE VALUE';
+SELECT FLOOR(5.9) AS 'FLOOR VALUE';
+SELECT CEILING(5.9) AS 'CEILING VALUE';
+------------------------------------------------------------------------------------------------------------------
+									 ***FOREIGN KEY USING ALTER COMMAND***
+
+use test
+ALTER TABLE Purchase_Detail
+ADD CONSTRAINT ForeignKey_Purchase_Detail
+   FOREIGN KEY (EmployeeID)
+   REFERENCES Employee (EmployeeID);
+------------------------------------------------------------------------------------------------------------------
+										 ***CREATING FUNCTION***
+
+create function fun_PrintNumber()  
+returns decimal(7,2)  
+as  
+begin  
+    return 1000.13  
+end 
+										 ***EXECUTING FUNCTION***
+print dbo.fun_PrintNumber() 
+------------------------------------------------------------------------------------------------------------------
+										 ***TO VIEW QUERIES***
+sp_helptext Procedure_Employee_Purchase;
+sp_helptext Employee_Purchase;
 ------------------------------------------------------------------------------------------------------------------
 */
 
 use test select * from Purchase_Detail
 use test select * from Employee
+use test select * from Sales_Detail
 use test select * from Car
 use test select * from CarDescription
 
-alter table Purchase_Detail add Phone varchar(15)
 
+alter table Sales_Detail add Buyer_FirstName nvarchar(15) 
 
+update Purchase_Detail set Product = 'BabyFood' where EmployeeID = 103
 
-update Purchase_Detail set Cost = '1250' where EmployeeID = 101
+alter table Sales_Detail drop column Buyer_LastName
 
+use test select * from Employee EXTRA_DECORATIONS E:M:P:L:O:Y:T:A:B:
 
-use test select * from Employee EXTRA_DECORATIONS E:M:P:L:O:Y:
-use test select * from Purchase_Detail
-
-select Employee.Phone, Employee.Place, Purchase_Detail.Cost
-from Employee
-right join Purchase_Detail
+CREATE PROCEDURE Procedure_Employee_Purchase
+--WITH ENCRYPTION
+AS
+BEGIN
+SET NOCOUNT ON
+select Employee.FirstName, Purchase_Detail.Product, Purchase_Detail.Cost, Employee.Phone 
+from Employee 
+inner join Purchase_Detail 
 on Employee.EmployeeID = Purchase_Detail.EmployeeID
+END
 
 
-select E.Phone, E.Place, P.Cost, P.Units
-from Employee E
-right join Purchase_Detail P
-on P.EmployeeID = E.EmployeeID
+EXEC Procedure_Employee_Purchase
+
+Create function Fun_EmployeeInformation()      
+returns table       
+as      
+return(select * from Employee)
+
+
+
+
+ 
