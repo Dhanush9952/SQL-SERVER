@@ -105,6 +105,8 @@ END
 									--***RUN/EXECUTE STORED PROCEDURE***
 EXEC Procedure_Employee_Purchase
 
+drop procedure Procedure_Employee_Purchase
+
 ------------------------------------------------------------------------------------------------------------------
 									--***DELETE A ROW FROM A TABLE***
 delete from Car where CarId = '101' and CarName = 'BMW'
@@ -313,7 +315,7 @@ SELECT CEILING(5.9) AS 'CEILING VALUE';
 
 use test
 ALTER TABLE Purchase_Detail
-ADD CONSTRAINT ForeignKey_Purchase_Detail
+ADD CONSTRAINT Foreignkey_PurchaseDetail
    FOREIGN KEY (EmployeeID)
    REFERENCES Employee (EmployeeID);
 ------------------------------------------------------------------------------------------------------------------
@@ -332,6 +334,38 @@ print dbo.fun_PrintNumber()
 sp_helptext Procedure_Employee_Purchase;
 sp_helptext Employee_Purchase;
 ------------------------------------------------------------------------------------------------------------------
+										 ***CREATING AND USING TEMP TABLES***
+create table #emp(empid int, empname nvarchar(15), empsal int)
+
+insert into #emp(empid, empname, empsal)
+values (1,'Luice',110000),
+		(2,'Vernice',210000),
+		(3,'Alethea',130000),
+		(4,'Ciara',114000)
+
+select * from #emp
+------------------------------------------------------------------------------------------------------------------
+										 ***USING PIVOT TABLES***
+
+SELECT 'TotalSalary' AS TotalSalaryByDept, 
+[3], [4]
+FROM
+(SELECT Salary, DepartmentID
+ FROM Employee) AS SourceTable
+PIVOT
+(
+ SUM(Salary)
+ FOR DepartmentID IN ([3], [4])
+) AS PivotTable;
+------------------------------------------------------------------------------------------------------------------
+										 ***CREATING INDEX***
+
+CREATE INDEX Employee_Index  
+ON Employee (EmployeeID, FirstName, LastName, Email, Phone, HireDate, Salary, Place, DepartmentID);   
+
+use test select * from test.dbo.Employee
+------------------------------------------------------------------------------------------------------------------
+
 */
 
 use test select * from Purchase_Detail
@@ -340,35 +374,21 @@ use test select * from Sales_Detail
 use test select * from Car
 use test select * from CarDescription
 
+use test1 select * from Employee
 
-alter table Sales_Detail add Buyer_FirstName nvarchar(15) 
+use test1 delete from Employee where EmployeeID = 104
 
-update Purchase_Detail set Product = 'BabyFood' where EmployeeID = 103
 
-alter table Sales_Detail drop column Buyer_LastName
 
-use test select * from Employee EXTRA_DECORATIONS E:M:P:L:O:Y:T:A:B:
-
-CREATE PROCEDURE Procedure_Employee_Purchase
---WITH ENCRYPTION
-AS
-BEGIN
-SET NOCOUNT ON
-select Employee.FirstName, Purchase_Detail.Product, Purchase_Detail.Cost, Employee.Phone 
+use test
+select FirstName,LastName, SUM(Salary) as Total 
 from Employee 
-inner join Purchase_Detail 
-on Employee.EmployeeID = Purchase_Detail.EmployeeID
-END
-
-
-EXEC Procedure_Employee_Purchase
-
-Create function Fun_EmployeeInformation()      
-returns table       
-as      
-return(select * from Employee)
+group by Place;
 
 
 
 
- 
+
+
+
+
