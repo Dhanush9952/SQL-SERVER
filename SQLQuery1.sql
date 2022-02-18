@@ -1,9 +1,10 @@
 /*
 create database test1;
 ---------------------------------------------------------
-backup database test1
-to disk = 'C:\Dhanush\Full stack Training\SQL\Test1.bak';
+backup database test
+to disk = 'C:\Dhanush\Full stack Training\SQL\Test.bak';
 ---------------------------------------------------------
+use test1
 CREATE TABLE Employee
 (  
     EmployeeID int,
@@ -20,12 +21,12 @@ Add Address varchar(500) NOT NULL,
     Designation varchar(50) NOT NULL,
     Qualification varchar(100);
 ---------------------------------------------------------
-SELECT * FROM Employee;
+use test1 SELECT * FROM Employee;
 ---------------------------------------------------------
 ALTER TABLE dbo.Employee
 DROP COLUMN Address,Phone, Email;
 ---------------------------------------------------------
-ALTER TABLE dbo.Employee
+ALTER TABLE Employee
 Add Addres varchar(500) NOT NULL,
     Email varchar(50) NOT NULL,
     Phone varchar(100);

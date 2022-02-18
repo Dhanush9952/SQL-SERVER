@@ -1,10 +1,10 @@
 ﻿
 
 /*
-create database test; 
+create database test2; 
 ------------------------------------------------------------------------------------------------------------------
 					--***CREATE TABLE WITH PRIMARY KEY, VARIABLE DECL***
-CREATE TABLE Employee
+use test2 CREATE TABLE Employee
 (  
     EmployeeID int, primary key (EmployeeID),
     FirstName nvarchar(50) NOT NULL,  
@@ -16,21 +16,26 @@ CREATE TABLE Employee
 );
 ------------------------------------------------------------------------------------------------------------------
                      -- ***INSERT DATA INTO A TABLE ***
-use test Insert into 
+use test2 Insert into 
 Employee(EmployeeID, FirstName, LastName, Email, Phone, HireDate, Salary) 
 values 
 ('101','Rahul','Dravid','rad@gmail.com','8880560617','02-01-2022','10000'),
 ('102','Tomato','Sauce','tse@gmail.com','8886560614','01-01-2022','20000'),
 ('103','Bill','Joan','bill@gmail.com','7886560614','04-01-2022','30000');
 
-use test Insert into 
+use test2 Insert into 
 Employee(EmployeeID, FirstName, LastName, Email, Phone, HireDate, Salary) 
 values 
 ('107','Rahul2','Dravid2','rad2@gmail.com','8880560612','02-01-2022','100002'),
 ('105','Tomato2','Sauce2','tse2@gmail.com','8886560612','01-01-2022','200002'),
 ('106','Bill2','Joan2','bill2@gmail.com','7886560612','04-01-2022','300002');
 ------------------------------------------------------------------------------------------------------------------
-                   --    ***ADD COLUMN TO A TABLE***
+			                   -- ***BACKUP DB***
+
+backup database test
+to disk = 'C:\Dhanush\Full stack Training\SQL\Test.bak';
+------------------------------------------------------------------------------------------------------------------
+		               --    ***ADD COLUMN TO A TABLE***
 alter table Employee 
 add Place nvarchar(50);
 ------------------------------------------------------------------------------------------------------------------
@@ -270,7 +275,7 @@ from Employee E
 right join Purchase_Detail P
 on P.EmployeeID = E.EmployeeID
 ------------------------------------------------------------------------------------------------------------------
-											***COMBINE 3 TABLES USING JOIN***
+											***COMBINE 3 (MULTIPLE) TABLES USING JOIN***
 
 select E.FirstName as 'TABLE_1', S.Buyer_LastName AS 'TABLE_2', P.Cost AS 'TABLE_3'
 from Employee E
@@ -278,6 +283,18 @@ join Purchase_Detail P
 on E.EmployeeID = P.EmployeeID
 join Sales_Detail S
 on P.FirstName = S.Buyer_FirstName
+
+												(OR)
+
+select E.FirstName as 'TABLE_1', S.Buyer_LastName AS 'TABLE_2', P.Cost AS 'TABLE_3', C.CarName AS 'TABLE_4'
+from Employee E
+join Purchase_Detail P
+on E.EmployeeID = P.EmployeeID
+join Sales_Detail S
+on P.FirstName = S.Buyer_FirstName
+join Car C
+on C.CarID = E.EmployeeID
+
 ------------------------------------------------------------------------------------------------------------------
 										***CREATING VIEW AND DISPLAY***
 
@@ -365,7 +382,14 @@ ON Employee (EmployeeID, FirstName, LastName, Email, Phone, HireDate, Salary, Pl
 
 use test select * from test.dbo.Employee
 ------------------------------------------------------------------------------------------------------------------
+										 ***GROUP BY STATEMENT(SELECT AND DISPLAY SUM OF GROUP OF RECORDS)***uses aggregate functions
 
+use test 
+select SUM(Salary),HireDate 
+from Employee 
+where DepartmentID < 8 
+GROUP BY HireDate
+------------------------------------------------------------------------------------------------------------------
 */
 
 use test select * from Purchase_Detail
@@ -386,6 +410,82 @@ from Employee
 group by Place;
 
 
+use test select * from Employee
+
+
+
+
+
+
+
+
+use test 
+select Employee.Phone, Employee.Place, Purchase_Detail.Cost
+from Employee
+right outer join Purchase_Detail
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
+where Employee.EmployeeID = Purchase_Detail.EmployeeID
+
+
+
+use test select Employee.FirstName, Employee.EMail 
+from Employee
+left outer join Purchase_Detail
+on Employee.EmployeeID = Purchase_Detail.EmployeeID
+where Employee.EmployeeID = Purchase_Detail.EmployeeID
+
+
+select E.FirstName as 'TABLE_1', S.Buyer_LastName AS 'TABLE_2', P.Cost AS 'TABLE_3', C.CarName AS 'TABLE_4'
+from Employee E
+join Purchase_Detail P
+on E.EmployeeID = P.EmployeeID
+join Sales_Detail S
+on P.FirstName = S.Buyer_FirstName
+join Car C
+on C.CarID = E.EmployeeID
+
+
+use test
+insert into Employee(EmployeeID, FirstName, LastName, Email, Phone, HireDate, Salary, Place, DepartmentID)
+values
+--(108, 'Yutte', 'Klapec', 'yuette.klapec@klapec.co.uk', 1933512513, '06-05-2022', 430980, 'WesternIsles', 6 ),
+(109, 'Leonard', 'Kufner', 'lkufner@kufner.co.uk', 01604718601, '06-05-2022', 230980, 'WesternIsles', 6 ),
+(110, 'German', 'Zelaya', 'german@hotmail.com', 01366210656, '07-06-2022', 130980, 'Cornwall', 6 )
+
+ 
+
+use test
+select * from Employee
+
+use test
+select * from Purchase_Detail
+
+
+use test 
+insert into Purchase_Detail(EmployeeID,FirstName,Product,Units,Cost,Place)
+values
+(109,'Pok','Molaison',null,null,null)
+
+
+
+
+use test2
+create table EmployeeOriginal
+(
+First_Name varchar(50) not null, 
+Last_Name varchar(50) not null, 
+Company_Name varchar(50) not null, 
+Addresss varchar(50), 
+City nvarchar(20),
+Country varchar(15),
+PostalCode nvarchar(15),
+Phone int,
+Email varchar(50),
+Web varchar(50)
+);
+
+use test2
+select * from EmployeeData
 
 
 
