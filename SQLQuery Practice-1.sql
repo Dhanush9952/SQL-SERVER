@@ -25,6 +25,7 @@ values
 
 
 use test2 select * from FinancialStatement
+use test2 select * from EmployeeData
 
 --CALCULATE TOTAL SALES VALUE
 use test2 select Segment, Units_Sold*Selling_Price as TotalSaleValue from FinancialStatement;
